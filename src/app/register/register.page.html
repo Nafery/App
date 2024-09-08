@@ -7,7 +7,31 @@
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">register</ion-title>
+      <ion-title size="large"></ion-title>
     </ion-toolbar>
   </ion-header>
+
+  <div id="container">
+    <ion-card>
+      <h2>Registrate!</h2>
+      <form>
+          <ion-input fill="solid" placeholder="Correo" type="email"></ion-input>
+        <ion-item>
+          <ion-input fill="solid" placeholder="Nombre"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input fill="solid" placeholder="Apellido"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input fill="solid" placeholder="Nombre de usuario"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input fill="solid" placeholder="Contraseña" type="password"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input fill="solid" placeholder="Confirma tu contraseña" type="password"></ion-input>
+        </ion-item>
+      </form>
+    </ion-card>
+  </div>
 </ion-content>

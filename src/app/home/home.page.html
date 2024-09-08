@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Blank
+      TeLlevoAPP
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -9,14 +9,6 @@
 <ion-content [fullscreen]="true">
   
   <img src="./assets/logoMovil.png" alt="Logo">
-  <ion-text>
-    <div class="ion-text-center">
-      <h1>
-        <strong>TeLlevoAPP</strong>
-      </h1>
-      <p>Aquí comienza todo</p>
-    </div>
-  </ion-text>
 
   <div id="container">
     <ion-card>
@@ -26,13 +18,16 @@
         </ion-item>
         <ion-item>
           <ion-input [(ngModel)]="user.password" label="Contraseña" type="password" labelPlacement="stacked"
-            placeholder="Ingrese su contraseña" maxlength="4">
+            placeholder="Ingrese su contraseña">
             <ion-input-password-toggle slot="end"></ion-input-password-toggle>
           </ion-input>
         </ion-item>
+        <ion-item>
+          <ion-label>{{mensaje}}</ion-label>
+        </ion-item>
         <ion-button (click)="login()">Ingresar</ion-button>
         <br>
-        <a href="">Crea tu cuenta gratis</a>
+        <a (click)="register()">Crea tu cuenta</a>
     </ion-card>
   </div>
 </ion-content>

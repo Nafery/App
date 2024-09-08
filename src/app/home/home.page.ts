@@ -14,20 +14,34 @@ export class HomePage {
     password: '',
   };
 
+  mensaje = '';
+
   constructor(private router: Router) {}
 
   login() {
     if (this.user.username.length != 0) {
       if (this.user.password.length != 0) {
         let navigationExtras: NavigationExtras = {
+
           state: {
             user: this.user.username,
             password: this.user.password,
           },
+
         };
-        this.router.navigate(['/perfil'], navigationExtras);
+        setTimeout(() => {
+
+          this.router.navigate(['/perfil'], navigationExtras);
+
+        }, 2000);
+      } else {
+        this.mensaje = 'Ingrese su contraseña';
       }
     }
+  }
+
+  register() {
+    this.router.navigate(['/register']);
   }
 
 }

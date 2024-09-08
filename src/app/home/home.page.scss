@@ -1,13 +1,16 @@
 ion-content {
   --background: #143642;
   img {
-    width: 100px;
+    width: 200px;
   }
   a {
     color: #0F8B8D;
   }
 }
 
+ion-header {
+  --background: #0F8B8D;
+}
 ion-button {
   --background: #692e4e;
   --color: #fff;
