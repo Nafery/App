@@ -6,3 +6,18 @@ ion-header{
         border-radius: 50%;
     }
 }
+
+ion-content {
+    ion-input {
+        height: 80px;
+    }
+
+    a{
+        text-decoration: none;
+        height: 80px;
+    }
+}
+
+#container a {
+    text-decoration: none;
+  }
