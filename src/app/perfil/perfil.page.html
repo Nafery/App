@@ -11,22 +11,47 @@
       <div class="container">
         <a href="">
           <ion-item>
-            Wallet
+            <ion-icon name="wallet"></ion-icon> Wallet
           </ion-item>
         </a>
-        <ion-item>
-          <ion-input placeholder="Movilización"></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-input placeholder="Mensajes"></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-input placeholder="Configuración"></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-input placeholder="Ayuda"></ion-input>
-        </ion-item>
+        <a href="">      
+          <ion-item>
+            <ion-icon name="car"></ion-icon> Movilización 
+          </ion-item>
+        </a>
+        <a href="">
+          <ion-item>          
+            <ion-icon name="mail"></ion-icon> Mensajes 
+          </ion-item>
+        </a>
+        <a href="">
+          <ion-item>
+            <ion-icon name="settings"></ion-icon> Configuración
+          </ion-item>
+        </a>
+        <a href="">
+          <ion-item>
+            <ion-icon name="help"></ion-icon> Ayuda
+          </ion-item>
+        </a>
       </div>
     </ion-toolbar>
   </ion-header>
+
+  <ion-tabs>
+    <ion-tab-bar slot="bottom">
+      <ion-tab-button tab="">
+        <ion-icon name="home"></ion-icon>
+        Home
+      </ion-tab-button>
+      <ion-tab-button tab="">
+        <ion-icon name="menu"></ion-icon>
+      </ion-tab-button>
+      <ion-tab-button tab="">
+        <ion-icon name="person"></ion-icon>
+        Perfil
+      </ion-tab-button>
+    </ion-tab-bar>
+  </ion-tabs>
+
 </ion-content>
