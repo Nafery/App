@@ -1,13 +1,30 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>{{user}}</ion-title>
+    <img src="./assets/LogoDef.JPG" alt="">
+    <h1>{{user}}</h1>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">{{user}}</ion-title>
+      <div class="container">
+        <ion-item>
+          <ion-input placeholder="Wallet"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input placeholder="Movilización"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input placeholder="Mensajes"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input placeholder="Configuración"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input placeholder="Ayuda"></ion-input>
+        </ion-item>
+      </div>
     </ion-toolbar>
   </ion-header>
 </ion-content>
