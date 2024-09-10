@@ -1,12 +1,15 @@
-ion-header{
-    --background: #0F8B8D;
-    display:flex;
+.header-content {
+    display: flex;
     align-items: center;
-    img {
-        width: 100px;
-        border-radius: 50%;
-    }
-}
+    margin-bottom: 35px;
+  }
+  
+.header-content img {
+    margin-right: 10px;
+    margin-left: 10px;
+    width: 100px;
+    border-radius: 50%;
+  }
 
 ion-content {
     --background: #143642;
@@ -18,8 +21,38 @@ ion-content {
         text-decoration: none;
         height: 80px;
     }
+
+    ion-item {
+        display: flex;
+        align-items: center;
+        font-size: 20px;
+
+        ion-icon {
+            margin-right: 15px;
+            font-size: 2em;
+        }
+    }
 }
+
+/*
+.container{
+    margin-left: 10px;
+    margin-right: 10px;
+}
+*/
 
 #container a {
     text-decoration: none;
   }
+
+
+  ion-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    margin-top: 10px;
+
+    ion-icon {
+        margin-right: 15px;
+    }
+}
