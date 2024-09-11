@@ -34,12 +34,24 @@ ion-content {
     }
 }
 
-/*
+
 .container{
     margin-left: 10px;
     margin-right: 10px;
+
+    ion-item {
+        --background: #143642;
+    }
+
+    a{
+        background-color: #143642;
+    }
 }
-*/
+
+ion-toolbar {
+    --background: #143642;
+    --color: #fff;
+}
 
 #container a {
     text-decoration: none;

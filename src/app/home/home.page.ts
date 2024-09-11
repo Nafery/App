@@ -44,4 +44,13 @@ export class HomePage {
     this.router.navigate(['/register']);
   }
 
+  recuperar() {
+    let navigationExtras: NavigationExtras = {
+      state: {
+        user: this.user.username,
+      },
+    };
+    this.router.navigate(['/recuperar'], navigationExtras);
+  }
+
 }

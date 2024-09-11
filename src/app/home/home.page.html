@@ -1,13 +1,7 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      TeLlevoAPP
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-header></app-header>
 
 <ion-content [fullscreen]="true">
-
+  
   <div id="container">
     <ion-card>
       <img src="./assets/LogoDef.JPG" alt="">
@@ -21,9 +15,9 @@
             <ion-input-password-toggle slot="end"></ion-input-password-toggle>
           </ion-input>
         </ion-item>
-        <ion-item>
-          <ion-label>{{mensaje}}</ion-label>
-        </ion-item>
+        <a (click)="recuperar()">Olvidaste tu contraseña?</a>
+        <ion-label>{{mensaje}}</ion-label>
+        <br>
         <ion-button (click)="login()">Ingresar</ion-button>
         <br>
         <a (click)="register()">Crea tu cuenta</a>
