@@ -22,4 +22,8 @@ export class RecuperarPage implements OnInit {
   ngOnInit() {
   }
 
+  recuperar() {
+    alert('Se ha enviado un correo a ' + this.user + ' con las instrucciones para recuperar su contraseña ');
+    this.router.navigate(['/home']);
+  }
 }

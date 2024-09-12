@@ -12,8 +12,10 @@
   </ion-header>
 
   <div class="container">
-    
-    <ion-title>Recuperar</ion-title>
-    <ion-input>Ingresa tu usuario</ion-input>
+    <ion-card>
+      <h2>Olvidaste tu contraseña?</h2>
+      <ion-input value="{{user}}">Ingresa tu usuario</ion-input>
+      <ion-button (click)=recuperar()>Recuperar</ion-button>
+    </ion-card>
   </div>
 </ion-content>

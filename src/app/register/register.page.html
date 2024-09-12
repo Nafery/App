@@ -14,24 +14,24 @@
   <div id="container">
     <ion-card>
       <h2>Registrate!</h2>
-      <form>
-          <ion-input fill="solid" placeholder="Correo" type="email"></ion-input>
+          <ion-input [(ngModel)]="user.email" fill="solid" placeholder="Correo" type="email"></ion-input>
         <ion-item>
-          <ion-input fill="solid" placeholder="Nombre"></ion-input>
+          <ion-input [(ngModel)]="user.name" fill="solid" placeholder="Nombre"></ion-input>
         </ion-item>
         <ion-item>
-          <ion-input fill="solid" placeholder="Apellido"></ion-input>
+          <ion-input [(ngModel)]="user.lastname" fill="solid" placeholder="Apellido"></ion-input>
         </ion-item>
         <ion-item>
-          <ion-input fill="solid" placeholder="Nombre de usuario"></ion-input>
+          <ion-input [(ngModel)]="user.username" fill="solid" placeholder="Nombre de usuario"></ion-input>
         </ion-item>
         <ion-item>
-          <ion-input fill="solid" placeholder="Contraseña" type="password"></ion-input>
+          <ion-input [(ngModel)]="user.password" fill="solid" placeholder="Contraseña" type="password"></ion-input>
         </ion-item>
         <ion-item>
-          <ion-input fill="solid" placeholder="Confirma tu contraseña" type="password"></ion-input>
+          <ion-input [(ngModel)]="user.password2" fill="solid" placeholder="Confirma tu contraseña" type="password"></ion-input>
         </ion-item>
-      </form>
+        <ion-label>{{mensaje}}</ion-label>
+        <ion-button (click)=login()>Registrarse</ion-button>
     </ion-card>
   </div>
 </ion-content>
