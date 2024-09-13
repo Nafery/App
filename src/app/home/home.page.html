@@ -3,7 +3,7 @@
 <ion-content [fullscreen]="true">
   
   <div id="container">
-    <ion-card>
+    <ion-card id="iniciar" *ngIf="!isLoading">
       <img src="./assets/LogoDef.JPG" alt="">
       <h2>Bienvenido!</h2>
         <ion-item>
@@ -21,6 +21,10 @@
         <ion-button (click)="login()">Ingresar</ion-button>
         <br>
         <a (click)="register()">Crea tu cuenta</a>
+    </ion-card>
+    <ion-card id="cargando" *ngIf="isLoading">
+      <img [src]="images[currentImageIndex]" alt="">
+      <h2>Iniciando sesión...</h2>
     </ion-card>
   </div>
 </ion-content>
