@@ -10,6 +10,10 @@ ion-content {
   }
 }
 
+ion-title {
+  color: #e7e7e7;
+}
+
 ion-toolbar{
   --background: #605856;
   --color: #8c8c8c;
@@ -23,9 +27,12 @@ ion-button {
   --color: #fff;
 }
 
+ion-card {
+  text-align: center;
+}
+
 #container {
   text-align: center;
-
   position: absolute;
   left: 0;
   right: 0;
