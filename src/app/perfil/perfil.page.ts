@@ -24,7 +24,7 @@ export class PerfilPage implements OnInit {
   ngOnInit() {
     const currentUser = this.auth.getCurrentUser();
     if (currentUser === "Naferyh") {
-      this.userImage = 'assets/bubu.png';
+      this.userImage = 'assets/Naferyh.jpg';
     } else if (currentUser === "bubu") {
       this.userImage = 'assets/bubu.png';
     } else if (currentUser === "Laffy") {
