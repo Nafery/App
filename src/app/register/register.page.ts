@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
+import { StorageService } from '../services/storage.service';
 
 
 @Component({
@@ -9,6 +10,9 @@ import { NavigationExtras, Router } from '@angular/router';
 })
 export class RegisterPage implements OnInit {
   
+  connectionStatus: boolean = false;
+  currentUser: string | null = null;
+
   user = {
     email: '',
     username: '',
@@ -20,7 +24,15 @@ export class RegisterPage implements OnInit {
 
   mensaje = '';
   
-  constructor(private router: Router) {}
+  constructor(private router: Router, private storage: StorageService) {}
+
+  registrar() {
+    console.log(this.user)
+    this.storage.set(this.user.username, this.user);
+    this.connectionStatus = true;
+    this.router.navigate(['/perfil']);
+  }
+
 
   login() {
     if (this.user.email.length != 0) {

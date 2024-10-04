@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { AnimationController} from '@ionic/angular';
 import { NavigationExtras, Router } from '@angular/router';
 import { AuthenticatorService } from '../services/authenticator.service';
+import { StorageService } from '../services/storage.service';
 
 @Component({
   selector: 'app-home',
@@ -24,11 +25,11 @@ export class HomePage {
   currentImageIndex = 0;
   imageChangeInterval: any;
 
-  constructor(private router: Router, private auth: AuthenticatorService) {}
+  constructor(private router: Router, private auth: AuthenticatorService, private storage: StorageService) {}
 
   async login() {
     if (this.user.password.length != 0) {
-      if (this.auth.login(this.user.username, this.user.password)) {
+      if (this.auth.loginBDD(this.user.username, this.user.password)) {
         this.isLoading = true;
         this.startImageChange();
 
