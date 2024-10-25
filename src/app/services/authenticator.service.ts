@@ -1,68 +1,68 @@
 import { Injectable } from '@angular/core';
-import { StorageService} from './storage.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticatorService {
+  private apiUrl = 'http://127.0.0.1:8000/api/users/'; // Reemplaza con la URL de tu API
+  private connectionStatus = false;
+  private currentUser: string | null = null;
 
-  connectionStatus: boolean = false;
-  currentUser: string | null = null;
-  constructor(private storage: StorageService) { }
+  constructor(private http: HttpClient) {}
 
-  loginBDD(user: string, password: string): boolean {
-    this.storage.get(user).then((value) => {
-      if (value.password == password) {
-        console.log("Usuario y contraseña correctos");
-        this.connectionStatus = true;
-        this.currentUser = user;
-      } else {
-        console.log("Contraseña incorrecta");
-        this.connectionStatus
-      }
-    }).catch((error) => {
-      console.log("Usuario no encontrado");
-      this.connectionStatus = false;
-    });
-    if (this.connectionStatus) {
-      return true;
-    } else {
-      return false;
-    }
+  // Método para autenticar al usuario
+  login(username: string, password: string): Observable<any> {
+    const url = `${this.apiUrl}?username=${username}`;
+    return this.http.get(url);
   }
 
-  login(user: string, password: string): boolean {
-    if(user == "Naferyh" && password == "wenalosk") {
-      this.connectionStatus = true;
-      this.currentUser = user;
-      return true;
-    } else if (user == "bubu" && password == "naxotonto") {
-      this.connectionStatus = true;
-      this.currentUser = user;
-      return true;
-    } else if (user == "Laffy" && password == "nose") {
-      this.connectionStatus = true;
-      this.currentUser = user;
-      return true;
-    }
-    else {
-      alert("Usuario o contraseña incorrectos");
-    }
-    
+  // Método para registrar un nuevo usuario
+  register(user: any): Observable<any> {
+    const url = `${this.apiUrl}`;
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.http.post(url, user, { headers });
+  }
+
+  // Método para obtener la lista de usuarios
+  getUsers(): Observable<any> {
+    const url = `${this.apiUrl}`;
+    return this.http.get(url);
+  }
+
+  // Método para actualizar un usuario
+  updateUser(user: any): Observable<any> {
+    const url = `${this.apiUrl}${user.id}/`;
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.http.put(url, user, { headers });
+  }
+
+  // Método para eliminar un usuario
+  deleteUser(userId: number): Observable<any> {
+    const url = `${this.apiUrl}${userId}/`;
+    return this.http.delete(url);
+  }
+
+  // Método para cerrar sesión
+  logout(): void {
     this.connectionStatus = false;
     this.currentUser = null;
-    return false;
   }
 
-  logout() {
-    this.connectionStatus = false;
-  }
-
-  isConected() {
+  // Método para verificar el estado de conexión
+  isConnected(): boolean {
     return this.connectionStatus;
   }
 
+  // Método para obtener el usuario conectado
   getCurrentUser(): string | null {
     return this.currentUser;
+  }
+
+  // Método para establecer el estado de conexión y el usuario actual
+  setConnectionStatus(status: boolean, user: string | null): void {
+    this.connectionStatus = status;
+    this.currentUser = user;
   }
 }

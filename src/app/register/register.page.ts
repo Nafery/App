@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
-import { StorageService } from '../services/storage.service';
+import { AuthenticatorService } from '../services/authenticator.service';
 
 
 @Component({
@@ -24,13 +24,35 @@ export class RegisterPage implements OnInit {
 
   mensaje = '';
   
-  constructor(private router: Router, private storage: StorageService) {}
+  constructor(private auth: AuthenticatorService, private router: Router) {}
 
   registrar() {
-    console.log(this.user)
-    this.storage.set(this.user.username, this.user);
-    this.connectionStatus = true;
-    this.router.navigate(['/perfil']);
+    if (this.user.username.length != 0 && this.user.password.length != 0 && this.user.password === this.user.password2) {
+      // Crear un nuevo objeto con solo los campos necesarios para la API
+      const userToRegister = {
+        username: this.user.username,
+        name: this.user.name,
+        lastname: this.user.lastname,
+        email: this.user.email,
+        password: this.user.password,
+      };
+
+      this.auth.register(userToRegister).subscribe(
+        data => {
+          if (data.success) {
+            this.mensaje = 'Registro exitoso';
+            this.router.navigate(['/home']);
+          } else {
+            this.mensaje = 'Error al registrar el usuario';
+          }
+        },
+        error => {
+          this.mensaje = 'Error al conectar con la API';
+        }
+      );
+    } else {
+      this.mensaje = 'Ingrese todos los campos y asegúrese de que las contraseñas coincidan';
+    }
   }
 
 

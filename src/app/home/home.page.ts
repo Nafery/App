@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
-import { AnimationController} from '@ionic/angular';
 import { NavigationExtras, Router } from '@angular/router';
 import { AuthenticatorService } from '../services/authenticator.service';
-import { StorageService } from '../services/storage.service';
 
 @Component({
   selector: 'app-home',
@@ -25,31 +23,44 @@ export class HomePage {
   currentImageIndex = 0;
   imageChangeInterval: any;
 
-  constructor(private router: Router, private auth: AuthenticatorService, private storage: StorageService) {}
+  constructor(private router: Router, private auth: AuthenticatorService) {}
 
   async login() {
     if (this.user.password.length != 0) {
-      if (this.auth.loginBDD(this.user.username, this.user.password)) {
-        this.isLoading = true;
-        this.startImageChange();
+      this.auth.login(this.user.username, this.user.password).subscribe(
+        data => {
+          if (data && data.length > 0) {
+            const user = data[0];
+            if (user.password === this.user.password) {
+              this.isLoading = true;
+              this.auth.setConnectionStatus(true, this.user.username);
+              this.startImageChange();
 
-        let navigationExtras: NavigationExtras = {
-          
-          state: {
-            user: this.user.username,
-            password: this.user.password,
-          },
-          
-        };
-        setTimeout(() => {
-          this.isLoading = false;
-          this.stopImageChange();
-          this.router.navigate(['/perfil'], navigationExtras);
-        }, 3000);
-      }
+              let navigationExtras: NavigationExtras = {
+                state: {
+                  user: this.user.username,
+                  password: this.user.password,
+                },
+              };
+              setTimeout(() => {
+                this.isLoading = false;
+                this.stopImageChange();
+                this.router.navigate(['/perfil'], navigationExtras);
+              }, 3000);
+            } else {
+              this.mensaje = 'Usuario o contraseña incorrectos';
+            }
+          } else {
+            this.mensaje = 'Usuario no encontrado';
+          }
+        },
+        error => {
+          this.mensaje = 'Error al conectar con la API';
+        }
+      );
     } else {
       this.mensaje = 'Ingrese su contraseña';
-    } 
+    }
   }
 
   startImageChange() {

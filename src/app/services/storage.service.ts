@@ -1,38 +1,33 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage-angular';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
 @Injectable({
   providedIn: 'root'
 })
 export class StorageService {
 
-  private bdd: Storage = new Storage();
-  private bddCheck: Promise<void>;
+  private apiUrl = 'http://127.0.0.1:8000/api/users'; // Reemplaza con la URL de tu API
 
-  constructor(private storage: Storage) { 
-    this.bddCheck = this.onInit();
-  }
-  
-  async onInit(): Promise<void> {
-    const storage = await this.storage.create();
-    this.bdd = storage;
+  constructor(private http: HttpClient) {}
+
+  // Método para obtener datos de la API
+  get(key: string): Observable<any> {
+    const url = `${this.apiUrl}/get/${key}/`;
+    return this.http.get(url);
   }
 
-  async bddConectada():Promise<void> {
-    await this.bddCheck;
+  // Método para establecer datos en la API
+  set(key: string, valor: any): Observable<any> {
+    const url = `${this.apiUrl}/set/${key}/`;
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.http.post(url, { valor }, { headers });
   }
 
-  async get(key: string): Promise<any> {
-    await this.bddConectada();
-    return this.bdd.get(key);
-  }
-
-  async set(key: string, valor: any) {
-    await this.bddConectada();
-    this.bdd.set(key, valor);
-    console.log('Actualizado con exito');
-  }
-
-  async borrar(key: string) {
-
+  // Método para borrar datos de la API
+  borrar(key: string): Observable<any> {
+    const url = `${this.apiUrl}/delete/${key}/`;
+    return this.http.delete(url);
   }
 }
