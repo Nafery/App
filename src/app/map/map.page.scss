@@ -1,0 +1,94 @@
+// Estilos generales para el ion-content
+ion-content {
+    --padding-top: 0;
+    --padding-bottom: 0;
+  }
+  
+  // Contenedor de búsqueda
+  .search-container {
+    position: absolute;
+    top: 70px; /* Ajusta este valor según el tamaño de tu header */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 500px;
+    z-index: 999;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 8px;
+  }
+  
+  // Estilo para el input de búsqueda
+  ion-input {
+    width: 100%;
+    padding: 8px;
+    border: none;
+    border-radius: 8px;
+    background-color: #f4f4f4;
+    font-size: 16px;
+    outline: none;
+  }
+  
+  // Contenedor de sugerencias
+  .suggestions-container {
+    background-color: white;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-height: 200px;
+    overflow-y: auto;
+    margin-top: 4px;
+  }
+  
+  // Lista de sugerencias
+  .suggestions-container ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  // Elementos individuales de la lista de sugerencias
+  .suggestions-container li {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .suggestions-container li:hover {
+    background-color: #e0e0e0;
+  }
+  
+  // Icono y texto de sugerencia
+  .suggestions-container li ion-icon {
+    font-size: 20px;
+    color: #007aff;
+    margin-right: 10px;
+  }
+  
+  // Estilo para el contenedor del mapa
+  #map {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .route-info {
+    padding: 10px;
+    background-color: #fff;
+    border-top: 1px solid #ccc;
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    z-index: 1;
+  }
+  .route-info p {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+  }
+  

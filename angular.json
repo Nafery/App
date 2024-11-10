@@ -31,8 +31,11 @@
                 "output": "./svg"
               }
             ],
-            "styles": ["src/global.scss", "src/theme/variables.scss"],
-            "scripts": []
+            "styles": ["src/global.scss", "src/theme/variables.scss", "node_modules/mapbox-gl/dist/mapbox-gl.css", "node_modules/@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css"],
+            "scripts": [],
+            "allowedCommonJsDependencies": [
+              "@mapbox/mapbox-gl-directions"
+            ]
           },
           "configurations": {
             "production": {

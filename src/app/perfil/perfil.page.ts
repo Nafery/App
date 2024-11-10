@@ -51,4 +51,8 @@ export class PerfilPage implements OnInit {
     this.router.navigate(['/users']);
   }
 
+  map() {
+    this.router.navigate(['/map']);
+  }
+
 }
