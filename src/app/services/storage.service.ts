@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 })
 export class StorageService {
 
-  private apiUrl = 'http://127.0.0.1:8000/api/users'; // Reemplaza con la URL de tu API
+  private apiUrl = 'https://n43kt17h-8000.brs.devtunnels.ms/api/users'; // Reemplaza con la URL de tu API
 
   constructor(private http: HttpClient) {}
 

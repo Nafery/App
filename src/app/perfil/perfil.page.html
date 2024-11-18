@@ -3,7 +3,6 @@
     <div class="header-content">
       <img [src]="userImage" alt="User Image">
       <h1>Bienvenido {{user}}!</h1>
-      <ion-button (click)="logout()">Cerrar sesión</ion-button>
       <ion-button *ngIf="canViewUsers" (click)="users()">Ver Usuarios</ion-button>
     </div>
   </ion-toolbar>
@@ -11,14 +10,22 @@
 
 <ion-content [fullscreen]="true">
       <div class="container">
-        <a href="">
-          <ion-item>
-            <ion-icon name="wallet"></ion-icon> Wallet
-          </ion-item>
-        </a>
+        <div class="horizontal-items">
+          <a (click)="map()">
+            <ion-item>
+              <ion-icon name="map-outline"></ion-icon> Map
+            </ion-item>
+          </a>
+          <a href="">
+            <ion-item>
+              <ion-icon name="wallet-outline"></ion-icon> Wallet
+            </ion-item>
+          </a>
+        </div>
+          <div class="vertical-items">
         <a href="">      
           <ion-item>
-            <ion-icon name="car"></ion-icon> Movilización 
+            <ion-icon name="car"></ion-icon> Viaje 
           </ion-item>
         </a>
         <a href="">
@@ -28,14 +35,15 @@
         </a>
         <a href="">
           <ion-item>
-            <ion-icon name="settings"></ion-icon> Configuración
-          </ion-item>
-        </a>
-        <a href="">
-          <ion-item>
             <ion-icon name="help"></ion-icon> Ayuda
           </ion-item>
         </a>
+        <a>
+          <ion-item button (click)="logout()">
+            <ion-icon name="log-out"></ion-icon> Cerrar sesión
+          </ion-item>
+        </a>
+        </div>
       </div>
 
 
@@ -50,7 +58,8 @@
         Home
       </ion-tab-button>
       <ion-tab-button tab="">
-        <ion-icon name="menu"></ion-icon>
+        <ion-icon name="settings"></ion-icon>
+        Configuración
       </ion-tab-button>
       <ion-tab-button tab="">
         <ion-icon name="person"></ion-icon>

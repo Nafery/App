@@ -10,9 +10,24 @@
     width: 100px;
     border-radius: 50%;
   }
+//
+ion-header {
+    ion-toolbar {
+        h1 {
+            font-size: 1.5em;
+            color: #564256;
+        }
 
+        ion-button {
+            --background: #564256;
+            --color: #F2F0EB; 
+            --border-radius: 10px;
+        }
+    }
+}
+//  
 ion-content {
-    --background: #605856;
+    --background: #F2F0EB;
     ion-input {
         height: 80px;
     }
@@ -26,6 +41,7 @@ ion-content {
         display: flex;
         align-items: center;
         font-size: 23px;
+        color: #000000;
 
         ion-icon {
             margin-right: 15px;
@@ -39,16 +55,16 @@ ion-content {
     margin-right: 10px;
 
     ion-item {
-        --background: #605856;
+        --background: #F2F0EB;
     }
 
     a{
-        background-color: #605856;
+        background-color: #F2F0EB;
     }
 }
 
 ion-toolbar {
-    --background: #605856;
+    --background: #F2F0EB;
     --color: #ffffff;
 }
 
@@ -71,6 +87,71 @@ ion-toolbar {
 .footer {
     text-align: center;
     padding: 10px;
-    color: #c3c3c3;
+    color: #564256;
     width: 100%;
+  }
+
+// container de las opciones
+
+.container {
+    flex-direction: column;
+    align-items: center;
+  
+    .horizontal-items {
+      display: flex;
+      justify-content: space-between; 
+      width: 100%; 
+      a {
+        flex: 1 1 calc(33.333% - 10px); // Tres elementos por fila con espacio entre ellos
+        margin: 5px;
+        text-decoration: none;
+  
+        ion-item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 100px; // Altura fija para los elementos cuadrados
+          background-color: #F2F0EB;
+        }
+  
+        ion-icon {
+          font-size: 2rem; // Tamaño del icono
+          margin-bottom: 5px; // Espacio entre el icono y el texto
+          color: #000000;
+        }
+      }
+    }
+  
+    .vertical-items {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+  
+      a {
+        width: 100%;
+        margin: 1px; // Espacio vertical entre los elementos
+        text-decoration: none;
+  
+        ion-item {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: center;
+          height: 80px; // Altura fija para los elementos
+          background-color: #F2F0EB;
+          border-radius: 10px;
+          text-align: center;
+        }
+  
+        ion-icon {
+          font-size: 2rem; // Tamaño del icono
+          margin-right: 20px; // Espacio entre el icono y el texto
+          color: #000000;
+        }
+
+       
+      }
+    }
   }
