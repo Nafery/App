@@ -7,8 +7,8 @@ import { Observable } from 'rxjs';
 })
 export class AuthenticatorService {
   private apiUrl = 'https://n43kt17h-8000.brs.devtunnels.ms/api/users/'; // Reemplaza con la URL de tu API
-  private connectionStatus = false;
-  private currentUser: string | null = null;
+  private TOKEN_KEY = 'auth_token'; // Clave para el token en almacenamiento local
+  private USERNAME_KEY = 'username'; // Clave para el nombre de usuario en almacenamiento local
 
   constructor(private http: HttpClient) {}
 
@@ -46,23 +46,28 @@ export class AuthenticatorService {
 
   // Método para cerrar sesión
   logout(): void {
-    this.connectionStatus = false;
-    this.currentUser = null;
+    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.USERNAME_KEY);
   }
 
   // Método para verificar el estado de conexión
   isConnected(): boolean {
-    return this.connectionStatus;
+    return !!localStorage.getItem(this.TOKEN_KEY);
   }
 
   // Método para obtener el usuario conectado
   getCurrentUser(): string | null {
-    return this.currentUser;
+    return localStorage.getItem(this.USERNAME_KEY);
   }
 
   // Método para establecer el estado de conexión y el usuario actual
   setConnectionStatus(status: boolean, user: string | null): void {
-    this.connectionStatus = status;
-    this.currentUser = user;
+    if (status) {
+      localStorage.setItem(this.TOKEN_KEY, 'token_placeholder'); // Agrega tu token real si se necesita
+      localStorage.setItem(this.USERNAME_KEY, user || '');
+    } else {
+      localStorage.removeItem(this.TOKEN_KEY);
+      localStorage.removeItem(this.USERNAME_KEY);
+    }
   }
 }

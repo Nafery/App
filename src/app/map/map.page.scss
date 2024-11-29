@@ -23,9 +23,126 @@ ion-content {
   height: 100%;
 }
 
+/* Estilo para la barra de búsqueda */
 ion-searchbar {
+  --background: #ffffff;
+  --border-radius: 8px;
+  --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --color: #333333;
+  padding: 0 12px;
+  margin: 10px;
   position: fixed;
   top: 60px; /* Ajusta este valor si es necesario para posicionar la barra de búsqueda */
-  width: 100%;
+  width: calc(100% - 20px); /* Ajusta el ancho para que sea igual a la lista de sugerencias */
   z-index: 20; /* Asegura que esté por encima de otros elementos */
+}
+
+/* Estilo para la lista de sugerencias */
+.suggestions-list {
+  background-color: #ffffff; /* Fondo blanco para que coincida con la barra de búsqueda */
+  border-radius: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+  width: calc(100% - 20px); /* Ocupa el mismo ancho que la barra de búsqueda */
+  margin: 0 10px;
+  position: fixed;
+  top: 110px; /* Ajusta este valor según la posición de tu barra de búsqueda */
+  z-index: 20;
+}
+
+/* Estilo para cada ítem de la lista */
+ion-item {
+  background-color: #ffffff; /* Fondo blanco */
+  color: #333333; /* Color de texto */
+  padding: 12px;
+  font-size: 1rem;
+  border-bottom: 1px solid #eeeeee; /* Línea de separación entre ítems */
+  box-shadow: none; /* Eliminar cualquier sombra que pueda hacer que se vea negro */
+}
+
+/* El último ítem no tendrá la línea de separación */
+ion-item:last-child {
+  border-bottom: none;
+}
+
+/* Efecto hover para los ítems */
+ion-item:hover {
+  background-color: #f1f1f1; /* Fondo gris claro al pasar el mouse */
+  cursor: pointer;
+}
+
+/* Estilo para el ítem seleccionado (opcional) */
+ion-item.selected {
+  background-color: #007aff; /* Fondo azul */
+  color: #ffffff; /* Texto blanco */
+}
+
+/* Estilo para la tarjeta de distancia y tiempo */
+ion-card {
+  background-color: #ffffff;
+  border-radius: 12px; /* Redondeo más suave */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin: 10px 5%; /* Centra el card con un margen de 5% en ambos lados */
+  padding: 15px;
+  max-width: 90%; /* Ajusta el tamaño máximo */
+  overflow: hidden;
+}
+
+ion-card-header {
+  background-color: #007aff;
+  color: #ffffff;
+  padding: 10px;
+  border-radius: 8px 8px 0 0;
+}
+
+ion-card-title {
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+ion-card-content {
+  padding: 10px;
+  color: #333333;
+}
+
+ion-card-content p {
+  margin: 5px 0;
+  font-size: 1rem;
+}
+
+button {
+  background-color: #ff6347;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 10px;
+}
+
+button:hover {
+  background-color: #e53e30;
+}
+
+
+/* Ajustes de la tarjeta, la barra de búsqueda y la lista para dispositivos móviles */
+@media (max-width: 768px) {
+  ion-card {
+    margin: 5px;
+    padding: 10px;
+  }
+
+  ion-searchbar {
+    margin: 5px;
+  }
+
+  .suggestions-list {
+    top: 140px; /* Ajusta si es necesario */
+    margin: 0 5px;
+  }
+
+  ion-item {
+    padding: 8px;
+  }
 }

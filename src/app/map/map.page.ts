@@ -3,6 +3,14 @@ import * as mapboxgl from 'mapbox-gl';
 import { Geolocation } from '@capacitor/geolocation';
 import { HttpClient } from '@angular/common/http';
 
+interface Route {
+  geometry: {
+    coordinates: [number, number][];
+  };
+  distance: number;
+  duration: number;
+}
+
 @Component({
   selector: 'app-map',
   templateUrl: './map.page.html',
@@ -15,7 +23,12 @@ export class MapPage implements OnInit, OnDestroy {
   watchId!: number;
   searchQuery: string = '';
   suggestions: any[] = [];
-  selectedDestination: [number, number] | null = null; // Para almacenar las coordenadas del destino
+  selectedDestination: [number, number] | null = null;
+  distance: string = '';
+  duration: string = '';
+  cost: string = ''; // Variable para mostrar el costo
+  private destinationMarker?: mapboxgl.Marker;
+
   private mapboxAccessToken = 'pk.eyJ1IjoibmFmZXJ5aCIsImEiOiJjbTM4dzltZnAwd2drMmlwc3JsMHB2d3R5In0.nqIQG-qiDGgSJJdX-LLg_A';
 
   constructor(private http: HttpClient) {}
@@ -96,7 +109,6 @@ export class MapPage implements OnInit, OnDestroy {
     return puck;
   }
 
-  // Modificación en searchAddress para obtener coordenadas
   async searchAddress() {
     const apiUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(this.searchQuery)}.json?access_token=${this.mapboxAccessToken}`;
     try {
@@ -111,41 +123,53 @@ export class MapPage implements OnInit, OnDestroy {
     }
   }
 
-  // Modificación en selectSuggestion para usar la ubicación seleccionada y calcular la ruta
   async selectSuggestion(suggestion: any) {
     const [longitude, latitude] = suggestion.geometry.coordinates;
-    this.selectedDestination = [longitude, latitude]; // Guardamos las coordenadas del destino
-
-    // Centra el mapa en la nueva ubicación seleccionada
+    this.selectedDestination = [longitude, latitude];
+  
+    // Elimina el marcador de destino anterior si existe
+    if (this.destinationMarker) {
+      this.destinationMarker.remove();
+    }
+  
+    // Crea un nuevo marcador de destino y guárdalo en la variable
+    this.destinationMarker = new mapboxgl.Marker({ color: '#ff6347' })
+      .setLngLat([longitude, latitude])
+      .addTo(this.map);
+  
     this.map.flyTo({
       center: [longitude, latitude],
       zoom: 16,
     });
-
-    // Coloca un marcador en el destino seleccionado
-    new mapboxgl.Marker({ color: '#ff6347' })
-      .setLngLat([longitude, latitude])
-      .addTo(this.map);
-
-    // Llama a la función getRoute para trazar la ruta desde la ubicación del usuario al destino
+  
     if (this.userLocation && this.selectedDestination) {
       this.getRoute(this.selectedDestination);
     }
-
-    this.suggestions = []; // Limpia las sugerencias después de la selección
+  
+    this.suggestions = [];
   }
+  
 
-  // Función para obtener la ruta desde la ubicación del usuario hasta el destino
   async getRoute(destination: [number, number]) {
-    const apiUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${this.userLocation.join(',')};${destination.join(',')}.json?access_token=${this.mapboxAccessToken}&geometries=geojson`;
+    const apiUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${this.userLocation.join(',')};${destination.join(',')}.json?access_token=${this.mapboxAccessToken}&geometries=geojson&alternatives=true`;
 
     try {
       const response: any = await this.http.get(apiUrl).toPromise();
       console.log('Respuesta de la API:', response);
+
       if (response.routes && response.routes.length > 0) {
-        const route = response.routes[0];
-        const routeCoordinates = route.geometry.coordinates;
-        console.log('Coordenadas de la ruta:', routeCoordinates);
+        const routes: Route[] = response.routes;
+        const routeCoordinates = routes.map(route => route.geometry.coordinates);
+        const distances = routes.map(route => route.distance);
+        const durations = routes.map(route => route.duration);
+
+        // Encontrar la mejor ruta (ejemplo simple: la de menor duración)
+        const bestRouteIndex = durations.indexOf(Math.min(...durations));
+
+        // Calcular y mostrar la mejor ruta
+        this.distance = `${(distances[bestRouteIndex] / 1000).toFixed(2)} km`;
+        this.duration = this.formatDuration(durations[bestRouteIndex]);
+        this.cost = this.calculateRouteCost(distances[bestRouteIndex], durations[bestRouteIndex]); // Calcular el costo
 
         if (this.map.getSource('route')) {
           this.map.removeSource('route');
@@ -160,7 +184,7 @@ export class MapPage implements OnInit, OnDestroy {
             type: 'Feature',
             geometry: {
               type: 'LineString',
-              coordinates: routeCoordinates,
+              coordinates: routeCoordinates[bestRouteIndex],
             },
             properties: {},
           },
@@ -179,12 +203,88 @@ export class MapPage implements OnInit, OnDestroy {
             'line-width': 4,
           },
         });
+
+        // Agregar rutas alternativas
+        routes.forEach((route, index) => {
+          if (index !== bestRouteIndex) {
+            this.map.addSource(`route-${index}`, {
+              type: 'geojson',
+              data: {
+                type: 'Feature',
+                geometry: {
+                  type: 'LineString',
+                  coordinates: route.geometry.coordinates,
+                },
+                properties: {
+                  routeIndex: index,
+                },
+              },
+            });
+
+            this.map.addLayer({
+              id: `route-${index}`,
+              type: 'line',
+              source: `route-${index}`,
+              layout: {
+                'line-cap': 'round',
+                'line-join': 'round',
+              },
+              paint: {
+                'line-color': '#ff6347',
+                'line-width': 2,
+                'line-dasharray': [2, 2],
+              },
+            });
+          }
+        });
       } else {
         console.error('No se encontró una ruta');
       }
     } catch (error) {
       console.error('Error al obtener la ruta:', error);
     }
+  }
+
+  formatDuration(seconds: number): string {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    if (hours > 0) {
+      return `${hours} h ${minutes} min`;
+    }
+    return `${minutes} min`;
+  }
+
+  // Función para calcular el costo del viaje y redondearlo como número entero
+  calculateRouteCost(distance: number, duration: number): string {
+    const costPerKm = 400; // Costo por km (puedes ajustar este valor)
+    const costPerMinute = 250; // Costo por minuto (puedes ajustar este valor)
+
+    const cost = (distance / 1000) * costPerKm + (duration / 60) * costPerMinute;
+    const roundedCost = Math.round(cost); // Redondear el costo a un número entero
+    return `$${roundedCost}`;
+  }
+
+  cancelRoute() {
+    // Remover la capa y la fuente de la ruta actual
+    if (this.map.getSource('route')) {
+      this.map.removeSource('route');
+    }
+    if (this.map.getLayer('route')) {
+      this.map.removeLayer('route');
+    }
+
+    // Remover las capas y fuentes de rutas alternativas
+    let index = 0;
+    while (this.map.getLayer(`route-${index}`)) {
+      this.map.removeLayer(`route-${index}`);
+      this.map.removeSource(`route-${index}`);
+      index++;
+    }
+
+    // Limpiar los datos de distancia, duración y costo
+    this.distance = '';
+    this.duration = '';
+    this.cost = '';
   }
 
   initializeDefaultMap() {

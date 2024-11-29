@@ -23,7 +23,8 @@ const routes: Routes = [
   },
   {
     path: 'users',
-    loadChildren: () => import('./users/users.module').then( m => m.UsersPageModule)
+    loadChildren: () => import('./users/users.module').then( m => m.UsersPageModule),
+    canActivate: [authGuard],
   },
   {
     path: 'recuperar',
@@ -31,7 +32,8 @@ const routes: Routes = [
   },
   {
     path: 'map',
-    loadChildren: () => import('./map/map.module').then( m => m.MapPageModule)
+    loadChildren: () => import('./map/map.module').then( m => m.MapPageModule),
+    canActivate: [authGuard],
   },
   {
     path: '**',

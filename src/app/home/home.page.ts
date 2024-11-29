@@ -33,9 +33,12 @@ export class HomePage {
             const user = data[0];
             if (user.password === this.user.password) {
               this.isLoading = true;
+              
+              // Establecer el estado de conexión y guardar el usuario actual
               this.auth.setConnectionStatus(true, this.user.username);
+              
               this.startImageChange();
-
+  
               let navigationExtras: NavigationExtras = {
                 state: {
                   user: this.user.username,
@@ -62,6 +65,7 @@ export class HomePage {
       this.mensaje = 'Ingrese su contraseña';
     }
   }
+  
 
   startImageChange() {
     this.imageChangeInterval = setInterval(() => {

@@ -8,23 +8,38 @@
   <!-- Contenedor del mapa -->
   <div id="map"></div>
 
-  <!-- Contenedor de la barra de búsqueda -->
-  <ion-searchbar
-    [(ngModel)]="searchQuery"
-    placeholder="Buscar dirección"
-    (ionInput)="searchAddress()"
-    debounce="500"
-    showCancelButton="focus"
-  ></ion-searchbar>
+  <!-- Contenedor de la barra de búsqueda y la lista de sugerencias -->
+  <div class="search-container">
+    <ion-searchbar
+      [(ngModel)]="searchQuery"
+      placeholder="Buscar dirección"
+      (ionInput)="searchAddress()"
+      debounce="500"
+      showCancelButton="focus"
+    ></ion-searchbar>
 
-  <!-- Lista de sugerencias de autocompletado -->
-  <ion-list *ngIf="suggestions.length > 0" style="position: fixed; top: 120px; width: 100%; z-index: 20;">
-    <ion-item *ngFor="let suggestion of suggestions" (click)="selectSuggestion(suggestion)">
-      {{ suggestion.place_name }}
-    </ion-item>
-  </ion-list>
+    <!-- Lista de sugerencias de autocompletado -->
+    <ion-list *ngIf="suggestions.length > 0" class="suggestions-list">
+      <ion-item *ngFor="let suggestion of suggestions" (click)="selectSuggestion(suggestion)">
+        {{ suggestion.place_name }}
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <!-- Contenedor para mostrar la distancia, el tiempo de viaje y el costo -->
+  <ion-card *ngIf="distance && duration && cost" style="position: fixed; bottom: 20px; width: 100%; z-index: 30;">
+    <ion-card-header>
+      <ion-card-title>Información de la Ruta</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>Distancia:</strong> {{ distance }}</p>
+      <p><strong>Tiempo de Viaje:</strong> {{ duration }}</p>
+      <p><strong>Costo del Viaje:</strong> {{ cost }}</p> <!-- Nueva línea para mostrar el costo -->
+      <!-- Botón para cancelar la ruta -->
+      <ion-button expand="full" color="danger" (click)="cancelRoute()">Cancelar Ruta</ion-button>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
-
 
 <!-- Botón de Mapbox flotante -->
 <ion-fab vertical="bottom" horizontal="end" slot="fixed">
