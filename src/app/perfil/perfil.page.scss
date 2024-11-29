@@ -22,6 +22,7 @@ ion-header {
             --background: #564256;
             --color: #F2F0EB; 
             --border-radius: 10px;
+            margin-right: 30px;
         }
     }
 }
@@ -96,6 +97,11 @@ ion-toolbar {
 .container {
     flex-direction: column;
     align-items: center;
+    .icon {
+      width: 50px;
+      height: 50px;
+      margin-right: 5px;
+    }
   
     .horizontal-items {
       display: flex;
@@ -113,6 +119,7 @@ ion-toolbar {
           justify-content: center;
           height: 100px; // Altura fija para los elementos cuadrados
           background-color: #F2F0EB;
+
         }
   
         ion-icon {

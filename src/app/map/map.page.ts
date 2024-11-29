@@ -1,9 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import * as mapboxgl from 'mapbox-gl';
-import { HttpClient } from '@angular/common/http';
-import { debounceTime, Subject } from 'rxjs';
 import { Geolocation } from '@capacitor/geolocation';
-import { Location } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-map',
@@ -13,29 +11,14 @@ import { Location } from '@angular/common';
 export class MapPage implements OnInit, OnDestroy {
   map!: mapboxgl.Map;
   userMarker!: mapboxgl.Marker;
-  destinationMarker!: mapboxgl.Marker;
+  userLocation: [number, number] = [0, 0];
   watchId!: number;
-  routeCoordinates: [number, number][] = [];
-  directionsUrl = 'https://api.mapbox.com/directions/v5/mapbox/driving';
-  geocodingUrl = 'https://api.mapbox.com/geocoding/v5/mapbox.places';
   searchQuery: string = '';
   suggestions: any[] = [];
-  userLocation: [number, number] = [0, 0];
-  useCapacitorGeolocation: boolean = false;
+  selectedDestination: [number, number] | null = null; // Para almacenar las coordenadas del destino
+  private mapboxAccessToken = 'pk.eyJ1IjoibmFmZXJ5aCIsImEiOiJjbTM4dzltZnAwd2drMmlwc3JsMHB2d3R5In0.nqIQG-qiDGgSJJdX-LLg_A';
 
-  // Nueva propiedad para almacenar la distancia y duración
-  distance: string | null = null;
-  duration: string | null = null;
-
-  // Observable para manejar el debounce
-  searchSubject = new Subject<string>();
-
-  constructor(private http: HttpClient) {
-    // Configurar el debounce para la búsqueda
-    this.searchSubject.pipe(debounceTime(300)).subscribe((query) => {
-      this.performSearch(query);
-    });
-  }
+  constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
     this.checkGeolocation();
@@ -51,7 +34,6 @@ export class MapPage implements OnInit, OnDestroy {
   }
 
   async checkGeolocation() {
-    // Intentar obtener la ubicación con la API nativa del navegador
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -60,13 +42,11 @@ export class MapPage implements OnInit, OnDestroy {
         },
         async (error) => {
           console.warn('Navigator geolocation no funcionó, intentando con Capacitor...', error);
-          this.useCapacitorGeolocation = true;
           await this.getCapacitorLocation();
         }
       );
     } else {
       console.error('Geolocalización no es soportada por este navegador, usando Capacitor.');
-      this.useCapacitorGeolocation = true;
       await this.getCapacitorLocation();
     }
   }
@@ -83,132 +63,147 @@ export class MapPage implements OnInit, OnDestroy {
   }
 
   initializeMap() {
-    (mapboxgl as any).accessToken = 'pk.eyJ1IjoibmFmZXJ5aCIsImEiOiJjbTM4dzltZnAwd2drMmlwc3JsMHB2d3R5In0.nqIQG-qiDGgSJJdX-LLg_A';
+    (mapboxgl as any).accessToken = this.mapboxAccessToken;
 
     this.map = new mapboxgl.Map({
       container: 'map',
       style: 'mapbox://styles/mapbox/streets-v11',
       center: this.userLocation,
-      zoom: 12,
+      zoom: 16,
     });
 
-    // Añadir un marcador en la ubicación actual del usuario
-    this.userMarker = new mapboxgl.Marker({ color: 'blue' })
-      .setLngLat(this.userLocation)
+    this.userMarker = new mapboxgl.Marker({
+      color: '#007aff',
+      draggable: false,
+      element: this.createPuckElement(),
+    })
+    .setLngLat(this.userLocation)
+    .addTo(this.map);
+
+    this.map.on('load', () => {
+      console.log('Mapa cargado');
+    });
+  }
+
+  createPuckElement(): HTMLElement {
+    const puck = document.createElement('div');
+    puck.style.width = '20px';
+    puck.style.height = '20px';
+    puck.style.backgroundColor = '#007aff';
+    puck.style.borderRadius = '50%';
+    puck.style.border = '2px solid white';
+    puck.style.transform = 'translate(-50%, -50%)';
+    return puck;
+  }
+
+  // Modificación en searchAddress para obtener coordenadas
+  async searchAddress() {
+    const apiUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(this.searchQuery)}.json?access_token=${this.mapboxAccessToken}`;
+    try {
+      const response: any = await this.http.get(apiUrl).toPromise();
+      if (response.features && response.features.length > 0) {
+        this.suggestions = response.features;
+      } else {
+        this.suggestions = [];
+      }
+    } catch (error) {
+      console.error('Error al buscar la dirección:', error);
+    }
+  }
+
+  // Modificación en selectSuggestion para usar la ubicación seleccionada y calcular la ruta
+  async selectSuggestion(suggestion: any) {
+    const [longitude, latitude] = suggestion.geometry.coordinates;
+    this.selectedDestination = [longitude, latitude]; // Guardamos las coordenadas del destino
+
+    // Centra el mapa en la nueva ubicación seleccionada
+    this.map.flyTo({
+      center: [longitude, latitude],
+      zoom: 16,
+    });
+
+    // Coloca un marcador en el destino seleccionado
+    new mapboxgl.Marker({ color: '#ff6347' })
+      .setLngLat([longitude, latitude])
       .addTo(this.map);
+
+    // Llama a la función getRoute para trazar la ruta desde la ubicación del usuario al destino
+    if (this.userLocation && this.selectedDestination) {
+      this.getRoute(this.selectedDestination);
+    }
+
+    this.suggestions = []; // Limpia las sugerencias después de la selección
+  }
+
+  // Función para obtener la ruta desde la ubicación del usuario hasta el destino
+  async getRoute(destination: [number, number]) {
+    const apiUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${this.userLocation.join(',')};${destination.join(',')}.json?access_token=${this.mapboxAccessToken}&geometries=geojson`;
+
+    try {
+      const response: any = await this.http.get(apiUrl).toPromise();
+      console.log('Respuesta de la API:', response);
+      if (response.routes && response.routes.length > 0) {
+        const route = response.routes[0];
+        const routeCoordinates = route.geometry.coordinates;
+        console.log('Coordenadas de la ruta:', routeCoordinates);
+
+        if (this.map.getSource('route')) {
+          this.map.removeSource('route');
+        }
+        if (this.map.getLayer('route')) {
+          this.map.removeLayer('route');
+        }
+
+        this.map.addSource('route', {
+          type: 'geojson',
+          data: {
+            type: 'Feature',
+            geometry: {
+              type: 'LineString',
+              coordinates: routeCoordinates,
+            },
+            properties: {},
+          },
+        });
+
+        this.map.addLayer({
+          id: 'route',
+          type: 'line',
+          source: 'route',
+          layout: {
+            'line-cap': 'round',
+            'line-join': 'round',
+          },
+          paint: {
+            'line-color': '#007aff',
+            'line-width': 4,
+          },
+        });
+      } else {
+        console.error('No se encontró una ruta');
+      }
+    } catch (error) {
+      console.error('Error al obtener la ruta:', error);
+    }
   }
 
   initializeDefaultMap() {
     this.map = new mapboxgl.Map({
       container: 'map',
       style: 'mapbox://styles/mapbox/streets-v11',
-      center: [-74.5, 40], // Coordenadas predeterminadas
-      zoom: 9,
+      center: [-74.5, 40],
+      zoom: 12,
     });
   }
 
-  // Método para manejar el input y aplicar debounce
-  onSearchChange(event: any) {
-    const query = event.target.value;
-    this.searchSubject.next(query);
-  }
-
-  // Método para realizar la búsqueda con autocompletado
-  performSearch(query: string) {
-    if (query.trim().length > 0) {
-      const url = `${this.geocodingUrl}/${encodeURIComponent(query)}.json?access_token=${(mapboxgl as any).accessToken}&autocomplete=true&limit=5`;
-
-      this.http.get(url).subscribe(
-        (response: any) => {
-          this.suggestions = response.features;
-        },
-        (error) => {
-          console.error('Error en la búsqueda de direcciones:', error);
-        }
-      );
-    } else {
-      this.suggestions = [];
-    }
-  }
-
-  // Método para seleccionar una sugerencia de autocompletado
-  selectSuggestion(suggestion: any) {
-    const coordinates = suggestion.geometry.coordinates;
-    const destination: [number, number] = [coordinates[0], coordinates[1]];
-
-    // Centrar el mapa en la dirección seleccionada
-    this.map.flyTo({ center: destination, zoom: 14 });
-
-    // Añadir un marcador en el destino seleccionado
-    if (this.destinationMarker) {
-      this.destinationMarker.setLngLat(destination);
-    } else {
-      this.destinationMarker = new mapboxgl.Marker({ color: 'red' })
-        .setLngLat(destination)
-        .addTo(this.map);
-    }
-
-    // Crear la ruta desde la ubicación actual hasta la dirección seleccionada
-    this.getRoute(this.userLocation, destination);
-
-    // Limpiar el input y las sugerencias
-    this.searchQuery = suggestion.place_name;
-    this.suggestions = [];
-  }
-
-  getRoute(start: [number, number], end: [number, number]) {
-    const url = `${this.directionsUrl}/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=${(mapboxgl as any).accessToken}`;
-
-    this.http.get(url).subscribe(
-      (response: any) => {
-        const route = response.routes[0].geometry.coordinates;
-        const distance = response.routes[0].distance; // en metros
-        const duration = response.routes[0].duration; // en segundos
-
-        // Almacenar la distancia y duración para usarlos en la vista
-        this.distance = (distance / 1000).toFixed(2); // Convertir metros a kilómetros
-        this.duration = (duration / 60).toFixed(2);   // Convertir segundos a minutos
-
-        // Llamar al método para dibujar la ruta en el mapa
-        this.drawRoute(route);
-      },
-      (error) => {
-        console.error('Error obteniendo la ruta:', error);
-      }
-    );
-  }
-
-  drawRoute(coordinates: [number, number][]) {
-    const geojson: GeoJSON.Feature<GeoJSON.LineString> = {
-      type: 'Feature',
-      properties: {},
-      geometry: {
-        type: 'LineString',
-        coordinates: coordinates,
-      },
-    };
-
-    if (this.map.getSource('route')) {
-      (this.map.getSource('route') as mapboxgl.GeoJSONSource).setData(geojson);
-    } else {
-      this.map.addSource('route', {
-        type: 'geojson',
-        data: geojson,
+  centerOnUserLocation() {
+    if (this.map && this.userLocation[0] !== 0 && this.userLocation[1] !== 0) {
+      this.map.flyTo({
+        center: this.userLocation,
+        zoom: 16,
       });
-
-      this.map.addLayer({
-        id: 'route',
-        type: 'line',
-        source: 'route',
-        layout: {
-          'line-join': 'round',
-          'line-cap': 'round',
-        },
-        paint: {
-          'line-color': '#007aff',
-          'line-width': 4,
-        },
-      });
+    } else {
+      console.warn('La ubicación del usuario no está disponible');
     }
   }
 }

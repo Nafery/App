@@ -1,31 +1,34 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Mapa</ion-title>
+  </ion-toolbar>
+</ion-header>
+
 <ion-content [fullscreen]="true">
-  <!-- Contenedor de búsqueda -->
-  <div class="search-container">
-    <ion-input
-      type="text"
-      placeholder="Buscar dirección..."
-      [(ngModel)]="searchQuery"
-      (ionInput)="onSearchChange($event)"
-      clear-input
-    ></ion-input>
-
-    <!-- Resultados de autocompletado -->
-    <div *ngIf="suggestions.length > 0" class="suggestions-container">
-      <ul>
-        <li *ngFor="let suggestion of suggestions" (click)="selectSuggestion(suggestion)">
-          <ion-icon name="location-outline"></ion-icon>
-          <span>{{ suggestion.place_name }}</span>
-        </li>
-      </ul>
-    </div>
-  </div>
-
   <!-- Contenedor del mapa -->
   <div id="map"></div>
 
-  <!-- Información de la ruta (distancia y duración) -->
-  <div class="route-info" *ngIf="distance && duration">
-    <p><strong>Distancia:</strong> {{ distance }} km</p>
-    <p><strong>Duración:</strong> {{ duration }} minutos</p>
-  </div>
+  <!-- Contenedor de la barra de búsqueda -->
+  <ion-searchbar
+    [(ngModel)]="searchQuery"
+    placeholder="Buscar dirección"
+    (ionInput)="searchAddress()"
+    debounce="500"
+    showCancelButton="focus"
+  ></ion-searchbar>
+
+  <!-- Lista de sugerencias de autocompletado -->
+  <ion-list *ngIf="suggestions.length > 0" style="position: fixed; top: 120px; width: 100%; z-index: 20;">
+    <ion-item *ngFor="let suggestion of suggestions" (click)="selectSuggestion(suggestion)">
+      {{ suggestion.place_name }}
+    </ion-item>
+  </ion-list>
 </ion-content>
+
+
+<!-- Botón de Mapbox flotante -->
+<ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  <ion-fab-button (click)="centerOnUserLocation()">
+    <ion-icon name="location-outline"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
